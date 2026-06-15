@@ -5,23 +5,25 @@
 
 import UIKit
 import Alamofire
-
+import CoreLocation
 class RideStartedVC: UIViewController {
     
     var rideId: Int = 0
-
+    var offeredPrice: Double = 0
     var passengerName: String = ""
     var passengerPhone: String = ""
-
+    var paymentMethod: String = "Cash"
     var pickupAddress: String = ""
     var dropAddress: String = ""
-
+    var driverLat: Double = 0
+    var driverLng: Double = 0
     var fare: String = ""
     var distance: String = ""
 
     var dropLat: Double = 0
     var dropLng: Double = 0
-    
+    var pickupLat: Double = 0
+    var pickupLng: Double = 0
     let baseURL = "https://unarmored-dropper-blatantly.ngrok-free.dev/api"
     
     let nameLbl = UILabel()
@@ -145,22 +147,55 @@ class RideStartedVC: UIViewController {
         
         completeBtn.frame = CGRect(x: 20, y: card.frame.height - 80, width: card.frame.width - 40, height: 52)
         completeBtn.backgroundColor = .systemGreen
-        completeBtn.setTitle("Complete Ride", for: .normal)
+        completeBtn.setTitle("Go Live Ride", for: .normal)
         completeBtn.setTitleColor(.white, for: .normal)
         completeBtn.titleLabel?.font = .boldSystemFont(ofSize: 16)
         completeBtn.layer.cornerRadius = 10
         completeBtn.addTarget(self, action: #selector(completeRideTapped), for: .touchUpInside)
         card.addSubview(completeBtn)
     }
-    
+    func calculateDistanceKm(
+        lat1: Double,
+        lng1: Double,
+        lat2: Double,
+        lng2: Double
+    ) -> Double {
+        let location1 = CLLocation(latitude: lat1, longitude: lng1)
+        let location2 = CLLocation(latitude: lat2, longitude: lng2)
+        return location1.distance(from: location2) / 1000
+    }
     func setData() {
         nameLbl.text = passengerName.isEmpty ? "Passenger" : passengerName
         pickupLbl.text = pickupAddress
         dropLbl.text = dropAddress
         fareLbl.text = "₹\(fare)"
-        distanceLbl.text = distance.isEmpty ? "0 km" : distance
+
+        print("========== RIDE STARTED DEBUG ==========")
+        print("Pickup:", pickupLat, pickupLng)
+        print("Drop:", dropLat, dropLng)
+        print("========================================")
+
+        if pickupLat != 0,
+           pickupLng != 0,
+           dropLat != 0,
+           dropLng != 0 {
+
+            let km = calculateDistanceKm(
+                lat1: pickupLat,
+                lng1: pickupLng,
+                lat2: dropLat,
+                lng2: dropLng
+            )
+
+            distanceLbl.text = "\(String(format: "%.1f", km)) km"
+            distance = "\(String(format: "%.1f", km)) km"
+
+        } else {
+            distanceLbl.text = "0 km"
+            distance = "0 km"
+            print("Distance not calculated: coordinates missing")
+        }
     }
-    
     func authHeaders() -> HTTPHeaders {
         let token = UserDefaults.standard.string(forKey: "driverAuthToken") ?? ""
         return [
@@ -171,43 +206,31 @@ class RideStartedVC: UIViewController {
     
     @objc func completeRideTapped() {
 
-        let params: [String: Any] = [
-            "ride_id": rideId
-        ]
+        let vc = LiveRideVC()
 
-        AF.request(
-            "\(baseURL)/rides/complete",
-            method: .put,
-            parameters: params,
-            encoding: JSONEncoding.default,
-            headers: authHeaders()
-        )
-        .responseData { response in
+        vc.rideId = self.rideId
+        vc.passengerName = self.passengerName
+        vc.passengerPhone = self.passengerPhone
+        vc.pickupAddress = self.pickupAddress
+        vc.dropAddress = self.dropAddress
+        vc.fare = self.fare
 
-            if let data = response.data,
-               let raw = String(data: data, encoding: .utf8) {
-                print("COMPLETE RAW:", raw)
-            }
+        vc.driverLat = self.driverLat
+        vc.driverLng = self.driverLng
+        vc.dropLat = self.dropLat
+        vc.dropLng = self.dropLng
 
-            print("COMPLETE STATUS:", response.response?.statusCode ?? 0)
+        vc.isFakeRide = true
 
-            DispatchQueue.main.async {
+        print("GO LIVE RIDE ID:", self.rideId)
+        print("GO LIVE FARE:", self.fare)
+        print("GO LIVE DRIVER:", self.driverLat, self.driverLng)
+        print("GO LIVE DROP:", self.dropLat, self.dropLng)
 
-                if response.response?.statusCode == 200 {
-
-                    let vc = LiveRideVC()
-                    vc.rideId = self.rideId
-                    vc.passengerName = self.passengerName
-                    vc.passengerPhone = self.passengerPhone
-                    vc.dropAddress = self.dropAddress
-                    vc.dropLat = self.dropLat
-                    vc.dropLng = self.dropLng
-                    vc.fare = self.fare
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-            }
-        }
-    }
+        self.navigationController?.pushViewController(vc, animated: true)
+             }
+            
+        
     
     @objc func backTapped() {
         navigationController?.popViewController(animated: true)

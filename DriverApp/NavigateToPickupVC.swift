@@ -15,7 +15,7 @@ class NavigateToPickupVC: UIViewController {
     var pickupAddress: String = ""
     var pickupLat: Double = 0
     var pickupLng: Double = 0
-    
+    var offeredPrice: Double = 0
     var driverLat: Double = 0
     var driverLng: Double = 0
     
@@ -45,7 +45,15 @@ class NavigateToPickupVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("========== NAVIGATE SCREEN DATA ==========")
+        print("Ride ID:", rideId)
+        print("Pickup Address:", pickupAddress)
+        print("Pickup Lat:", pickupLat)
+        print("Pickup Lng:", pickupLng)
+        print("Drop Address:", dropAddress)
+        print("Drop Lat:", dropLat)
+        print("Drop Lng:", dropLng)
+        print("=========================================")
         view.backgroundColor = .white
         
         setupMap()
@@ -138,11 +146,17 @@ class NavigateToPickupVC: UIViewController {
     }
     
     func drawRoute() {
-        guard pickupLat != 0, pickupLng != 0, driverLat != 0, driverLng != 0 else {
-            print("Invalid coordinates")
+        guard pickupLat != 0, pickupLng != 0 else {
+            print("❌ Pickup coordinates missing in NavigateToPickupVC")
+            print("Pickup:", pickupLat, pickupLng)
             return
         }
-        
+
+        guard driverLat != 0, driverLng != 0 else {
+            print("❌ Driver coordinates missing")
+            return
+        }
+
         let driverCoord = CLLocationCoordinate2D(latitude: driverLat, longitude: driverLng)
         let pickupCoord = CLLocationCoordinate2D(latitude: pickupLat, longitude: pickupLng)
         
@@ -223,26 +237,36 @@ class NavigateToPickupVC: UIViewController {
                let raw = String(data: data, encoding: .utf8) {
                 print("ARRIVED RAW:", raw)
             }
-            
+            guard self.pickupLat != 0, self.pickupLng != 0 else {
+                print("❌ Cannot go ArrivedAtPickupVC: pickup coordinates missing")
+                return
+            }
             print("ARRIVED STATUS:", response.response?.statusCode ?? 0)
             
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [self] in
                 if response.response?.statusCode == 200 {
                     let vc = ArrivedAtPickupVC()
-
+                    print("PASS FARE TO ARRIVED:", vc.fare)
+                    print("PASS OFFERED PRICE TO ARRIVED:", vc.offeredPrice)
                     vc.rideId = self.rideId
                     vc.passengerName = self.passengerName
                     vc.passengerPhone = self.passengerPhone
                     vc.pickupAddress = self.pickupAddress
                     vc.dropAddress = self.dropAddress
-                    vc.fare = self.fare
-                    vc.distance = self.distance
+                    vc.fare = fare.isEmpty
+                        ? String(format: "%.2f", offeredPrice)
+                        : fare
+
+                    vc.offeredPrice = offeredPrice
+
+                    vc.driverLat = self.driverLat
+                    vc.driverLng = self.driverLng
                     vc.dropLat = self.dropLat
                     vc.dropLng = self.dropLng
                     vc.pickupLat = self.pickupLat
                     vc.pickupLng = self.pickupLng
-                    
-
+                    print("PASS LIVE PICKUP:", self.pickupLat, self.pickupLng)
+                    print("PASS LIVE DROP:", self.dropLat, self.dropLng)
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }

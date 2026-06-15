@@ -13,7 +13,7 @@ class OTPVerificationVC: UIViewController {
     let otpStack = UIStackView()
     var otpLabels: [UILabel] = []
     var otpText = ""
-    
+    var offeredPrice: Double = 0
     let infoLbl = UILabel()
     let resendLbl = UILabel()
     let startRideBtn = UIButton()
@@ -28,11 +28,14 @@ class OTPVerificationVC: UIViewController {
     var dropLng: Double = 0
     var pickupLat: Double = 0
     var pickupLng: Double = 0
-    
+    var driverLat: Double = 0
+    var driverLng: Double = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupUI()
+        print("OTP FARE:", fare)
+        print("OTP OFFERED PRICE:", offeredPrice)
     }
     
     func setupUI() {
@@ -238,16 +241,35 @@ class OTPVerificationVC: UIViewController {
                     print("CALCULATED DISTANCE:", distanceKm)
 
                     let vc = RideStartedVC()
+
                     vc.rideId = self.rideId
                     vc.passengerName = self.passengerName
                     vc.passengerPhone = self.passengerPhone
+
                     vc.pickupAddress = self.pickupAddress
                     vc.dropAddress = self.dropAddress
-                    vc.fare = self.fare
-                    vc.distance = String(format: "%.1f km", distanceKm)
+
+                    vc.pickupLat = self.pickupLat
+                    vc.pickupLng = self.pickupLng
                     vc.dropLat = self.dropLat
                     vc.dropLng = self.dropLng
-                    
+
+                    vc.driverLat = self.driverLat
+                    vc.driverLng = self.driverLng
+
+                    vc.fare = self.fare.isEmpty
+                        ? String(format: "%.2f", self.offeredPrice)
+                        : self.fare
+
+                    vc.offeredPrice = self.offeredPrice
+                    vc.paymentMethod = "Cash"
+                    vc.distance = String(format: "%.1f km", distanceKm)
+
+                    print("PASS FARE TO RIDE STARTED:", vc.fare)
+                    print("PASS OFFERED PRICE TO RIDE STARTED:", vc.offeredPrice)
+
+                    vc.distance = String(format: "%.1f km", distanceKm)
+
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }

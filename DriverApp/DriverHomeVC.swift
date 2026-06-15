@@ -66,7 +66,9 @@ class DriverHomeVC: UIViewController {
     var driverId: Int = 0
     var socketManager: SocketManager?
     var socket: SocketIOClient?
-    
+
+    var passengerName = ""
+    var passengerPhone = ""
     let baseURL = "https://unarmored-dropper-blatantly.ngrok-free.dev/api"
     let socketURL = "https://unarmored-dropper-blatantly.ngrok-free.dev"
     
@@ -224,14 +226,16 @@ extension DriverHomeVC {
             guard let self = self else { return }
             
             print("✅ Socket Connected")
-            print("Listening Event: newRide_\(self.driverId)")
+            print("Joining Driver Room:", self.driverId)
+            
+            self.socket?.emit("joinDriver", self.driverId)
         }
         
-        socket?.on("newRide_\(driverId)") { [weak self] data, ack in
+        socket?.on("newRide") { [weak self] data, ack in
             
             guard let self = self else { return }
             
-            print("🚕 New Ride Received:", data)
+            print("🔥 NEW RIDE RECEIVED:", data)
             
             DispatchQueue.main.async {
                 self.showRidePopup(data: data)
@@ -266,34 +270,52 @@ extension DriverHomeVC {
         )
         
         alert.addAction(UIAlertAction(title: "Reject", style: .destructive) { _ in
-            
             self.rejectRideAPI(rideId: rideId)
-            
         })
         
-        alert.addAction(UIAlertAction(title: "Accept", style: .default) { _ in
-
+        alert.addAction(UIAlertAction(title: "Accept Same Price", style: .default) { _ in
+            
             self.acceptRideAPI(rideId: rideId)
+            
             let vc = PassengerDetailsVC()
-
             vc.rideId = rideId
-
+            
             vc.passengerName = rideData["user_name"] as? String ?? ""
             vc.passengerPhone = rideData["user_phone"] as? String ?? ""
-
+            
             vc.pickupAddress = pickup
             vc.dropAddress = drop
+            
+            vc.pickupLat = Double("\(rideData["pickup_lat"] ?? "0")") ?? 0
+            vc.pickupLng = Double("\(rideData["pickup_lng"] ?? "0")") ?? 0
+            
+            vc.dropLat = Double("\(rideData["drop_lat"] ?? "0")") ?? 0
+            vc.dropLng = Double("\(rideData["drop_lng"] ?? "0")") ?? 0
+            
+            vc.fare = "\(price)"
+            
+            self.navigationController?.pushViewController(vc, animated: true)
+        })
+        
+        alert.addAction(UIAlertAction(title: "Send Higher Offer", style: .default) { _ in
+            
+            let vc = RideOfferVC()
+            vc.fare = "\(price)"
+            vc.rideId = rideId
+            vc.driverId = self.driverId
+            vc.pickupAddress = pickup
+            vc.dropAddress = drop
+            vc.userFare = Double("\(price)") ?? 0
+            vc.userMaxFare = Double("\(rideData["max_price"] ?? 0)") ?? 0
+            vc.passengerName = rideData["user_name"] as? String ?? ""
+            vc.passengerPhone = "\(rideData["user_phone"] ?? "")"
 
             vc.pickupLat = Double("\(rideData["pickup_lat"] ?? "0")") ?? 0
             vc.pickupLng = Double("\(rideData["pickup_lng"] ?? "0")") ?? 0
-
             vc.dropLat = Double("\(rideData["drop_lat"] ?? "0")") ?? 0
             vc.dropLng = Double("\(rideData["drop_lng"] ?? "0")") ?? 0
 
-            vc.fare = "\(price)"
-
             self.navigationController?.pushViewController(vc, animated: true)
-
         })
         
         DispatchQueue.main.async {

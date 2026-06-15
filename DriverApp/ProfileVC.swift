@@ -108,9 +108,8 @@ class ProfileVC: UIViewController {
         row.backgroundColor = .white
         row.tag = tag
         row.isUserInteractionEnabled = true
-//        
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(menuTapped(_:)))
-//
+        let tap = UITapGestureRecognizer(target: self, action: #selector(menuTapped(_:)))
+        row.addGestureRecognizer(tap)
         
         
         let iconView = UIImageView(frame: CGRect(x: 22, y: 17, width: 20, height: 20))
@@ -135,26 +134,16 @@ class ProfileVC: UIViewController {
         return row
     }
     
-//    @objc func menuTapped(_ gesture: UITapGestureRecognizer) {
-//        guard let tag = gesture.view?.tag else { return }
-//        
-//        switch tag {
-//        case 0:
-////            navigationController?.pushViewController(MyVehicleVC(), animated: true)
-//        case 1:
-////            navigationController?.pushViewController(BankDetailsVC(), animated: true)
-//        case 2:
-////            navigationController?.pushViewController(DocumentsVC(), animated: true)
-//        case 3:
-////            navigationController?.pushViewController(SettingsVC(), animated: true)
-//        case 4:
-////            navigationController?.pushViewController(HelpSupportVC(), animated: true)
-//        case 5:
-//            showLogoutAlert()
-//        default:
-//            break
-//        }
-//    }
+    @objc func menuTapped(_ gesture: UITapGestureRecognizer) {
+        guard let tag = gesture.view?.tag else { return }
+        
+        switch tag {
+        case 5:
+            showLogoutAlert()
+        default:
+            break
+        }
+    }
     
     @objc func editProfileImageTapped() {
         let alert = UIAlertController(title: "Change Profile Photo", message: nil, preferredStyle: .actionSheet)
@@ -218,18 +207,26 @@ class ProfileVC: UIViewController {
         UserDefaults.standard.removeObject(forKey: "driverAuthToken")
         UserDefaults.standard.removeObject(forKey: "driverProfileImage")
         UserDefaults.standard.synchronize()
-        
-        let vc = LoginVC()
-        let nav = UINavigationController(rootViewController: vc)
-        nav.isNavigationBarHidden = true
-        
-        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-            sceneDelegate.window?.rootViewController = nav
-            sceneDelegate.window?.makeKeyAndVisible()
-        } else {
-            UIApplication.shared.windows.first?.rootViewController = nav
-            UIApplication.shared.windows.first?.makeKeyAndVisible()
+
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+        guard let loginVC = storyboard.instantiateViewController(
+            withIdentifier: "LoginVC"
+        ) as? LoginVC else {
+            print("LoginVC storyboard id missing")
+            return
         }
+
+        let nav = UINavigationController(rootViewController: loginVC)
+        nav.isNavigationBarHidden = true
+
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else {
+            return
+        }
+
+        window.rootViewController = nav
+        window.makeKeyAndVisible()
     }
     
     func authHeaders() -> HTTPHeaders {

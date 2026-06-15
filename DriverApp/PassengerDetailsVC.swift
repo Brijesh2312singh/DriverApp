@@ -11,20 +11,24 @@ class PassengerDetailsVC: UIViewController {
     
     var paymentType: String = "Cash"
   
-    
+    var fare: String = ""
+    var paymentMethod: String = "Cash"
     var rideId: Int = 0
         var passengerName: String = ""
         var passengerPhone: String = ""
 
         var pickupAddress: String = ""
         var dropAddress: String = ""
-
+    var offerId: Int = 0
         var pickupLat: Double = 0
         var pickupLng: Double = 0
         var dropLat: Double = 0
         var dropLng: Double = 0
+    var offeredPrice: Double = 0
+    var driverLat: Double = 0
+    var driverLng: Double = 0
     var distance: String = ""
-        var fare: String = ""
+       
     let baseURL = "https://unarmored-dropper-blatantly.ngrok-free.dev/api"
     
     let profileImageView = UIImageView()
@@ -143,7 +147,7 @@ class PassengerDetailsVC: UIViewController {
         pickupLbl.text = pickupAddress
         dropLbl.text = dropAddress
         fareLbl.text = "₹\(fare)"
-        paymentLbl.text = paymentType
+        paymentLbl.text = paymentMethod
     }
     
     func circleButton(x: CGFloat, y: CGFloat, icon: String) -> UIButton {
@@ -195,7 +199,7 @@ class PassengerDetailsVC: UIViewController {
             encoding: JSONEncoding.default,
             headers: authHeaders()
         )
-        .responseData { response in
+        .responseData { [self] response in
             
             if let data = response.data,
                let raw = String(data: data, encoding: .utf8) {
@@ -203,28 +207,38 @@ class PassengerDetailsVC: UIViewController {
             }
             
             print("ARRIVED STATUS:", response.response?.statusCode ?? 0)
-            
-            DispatchQueue.main.async {
+            print("========== PASSENGER DETAILS DATA ==========")
+            print("Pickup:", pickupLat, pickupLng)
+            print("Drop:", dropLat, dropLng)
+            print("===========================================")
+            DispatchQueue.main.async { [self] in
                 
                 let vc = NavigateToPickupVC()
 
-                vc.rideId = self.rideId
+                vc.rideId = rideId
+                vc.pickupAddress = pickupAddress
+                vc.pickupLat = pickupLat
+                vc.pickupLng = pickupLng
 
-                vc.pickupAddress = self.pickupAddress
-                vc.pickupLat = self.pickupLat
-                vc.pickupLng = self.pickupLng
+                vc.dropAddress = dropAddress
+                vc.dropLat = dropLat
+                vc.dropLng = dropLng
 
-                vc.dropAddress = self.dropAddress
-                vc.dropLat = self.dropLat
-                vc.dropLng = self.dropLng
+                vc.passengerName = passengerName
+                vc.passengerPhone = passengerPhone
 
-                vc.passengerName = self.passengerName
-                vc.passengerPhone = self.passengerPhone
+                // ✅ Fare pass karo
+                vc.fare = fare
+                vc.offeredPrice = offeredPrice
 
-                vc.fare = self.fare
-                vc.distance = self.distance
+                // ✅ Driver location bhi pass karo
+                vc.driverLat = driverLat
+                vc.driverLng = driverLng
 
-                self.navigationController?.pushViewController(vc, animated: true)
+                print("PASS FARE TO NAVIGATE:", fare)
+                print("PASS OFFERED PRICE:", offeredPrice)
+
+                navigationController?.pushViewController(vc, animated: true)
             
                 
                 print("Go to OTP Screen")

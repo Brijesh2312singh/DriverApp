@@ -19,14 +19,15 @@ class ArrivedAtPickupVC: UIViewController {
     var pickupLat: Double = 0
     var pickupLng: Double = 0
     let baseURL = "https://unarmored-dropper-blatantly.ngrok-free.dev/api"
-    
+    var offeredPrice: Double = 0
     let profileImageView = UIImageView()
     let nameLbl = UILabel()
     let ratingLbl = UILabel()
     let pickupLbl = UILabel()
     let confirmBtn = UIButton()
     let messageBtn = UIButton()
-    
+    var driverLat: Double = 0
+    var driverLng: Double = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -175,14 +176,20 @@ class ArrivedAtPickupVC: UIViewController {
                         vc.passengerPhone = self.passengerPhone
                         vc.pickupAddress = self.pickupAddress
                         vc.dropAddress = self.dropAddress
+
+                        // ✅ fare pass
                         vc.fare = self.fare
-                        vc.distance = self.distance
+                        vc.offeredPrice = self.offeredPrice
+
+                        vc.driverLat = self.driverLat
+                        vc.driverLng = self.driverLng
                         vc.dropLat = self.dropLat
                         vc.dropLng = self.dropLng
                         vc.pickupLat = self.pickupLat
                         vc.pickupLng = self.pickupLng
-                        vc.dropLat = self.dropLat
-                        vc.dropLng = self.dropLng
+
+                        print("PASS FARE TO OTP:", self.fare)
+                        print("PASS OFFERED PRICE TO OTP:", self.offeredPrice)
 
                         self.navigationController?.pushViewController(vc, animated: true)
                     }

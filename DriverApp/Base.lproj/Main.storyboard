@@ -530,12 +530,12 @@ You Want</string>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="emailTF" destination="Gll-LW-9wU" id="Eso-Bf-3hQ"/>
-                        <outlet property="emailView" destination="HPz-gT-b18" id="Xl6-Eq-G4e"/>
+                        <outlet property="emailTF" destination="Gll-LW-9wU" id="Ysi-xx-EfR"/>
+                        <outlet property="emailView" destination="HPz-gT-b18" id="rgA-hE-SHo"/>
                         <outlet property="eyeBtn" destination="Pj9-UX-2pZ" id="evN-TN-ZW0"/>
-                        <outlet property="loginBtn" destination="57D-VQ-g46" id="kbq-hQ-3QE"/>
-                        <outlet property="passwordTF" destination="p1V-xv-XG1" id="ugh-MG-mte"/>
-                        <outlet property="passwordView" destination="UlG-HN-H9D" id="k7s-62-5KM"/>
+                        <outlet property="loginBtn" destination="57D-VQ-g46" id="6fD-IO-Tmp"/>
+                        <outlet property="passwordTF" destination="p1V-xv-XG1" id="Eg8-Si-HOU"/>
+                        <outlet property="passwordView" destination="UlG-HN-H9D" id="aIT-ku-WDm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KU7-Ob-1iz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1127,6 +1127,51 @@ You Want</string>
             </objects>
             <point key="canvasLocation" x="11115" y="-625"/>
         </scene>
+        <!--Ride OfferVC-->
+        <scene sceneID="PXq-Mu-07f">
+            <objects>
+                <viewController storyboardIdentifier="RideOfferVC" id="j7l-Nn-6Vf" customClass="RideOfferVC" customModule="DriverApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="chm-TP-Mbg">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="eGk-Ak-lF0"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9MU-cA-B3w" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="11793" y="-622"/>
+        </scene>
+        <!--Offer WaitingVC-->
+        <scene sceneID="LVA-Pd-G4l">
+            <objects>
+                <viewController storyboardIdentifier="OfferWaitingVC" id="O05-g5-769" customClass="OfferWaitingVC" customModule="DriverApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="GUb-Ky-EIt">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="1WK-Ig-nFR"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VVw-UZ-hOM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="12491" y="-623"/>
+        </scene>
+        <!--User Accepted OfferVC-->
+        <scene sceneID="VPv-0o-kuq">
+            <objects>
+                <viewController storyboardIdentifier="UserAcceptedOfferVC" id="Ed3-jx-BoZ" customClass="UserAcceptedOfferVC" customModule="DriverApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fcZ-HS-GRm">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="5Mf-qK-Nkd"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OgA-Wj-WtI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="13126" y="-623"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Button" width="40" height="40"/>
@@ -1146,13 +1191,13 @@ You Want</string>
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray4Color">
-            <color red="0.81960784310000001" green="0.81960784310000001" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.55294117649999996" blue="0.15686274510000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.55294117647058827" blue="0.15686274509803921" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
